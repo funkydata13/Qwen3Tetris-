@@ -1,32 +1,63 @@
 [gd_scene format=4 uid="uid://8bvtriwtkptg"]
 
 [ext_resource type="Script" uid="uid://dtshirju3nuip" path="res://scripts/game.gd" id="1_uwrxv"]
-[ext_resource type="Texture2D" uid="uid://cbg76drh7my0n" path="res://assets/bloc_cadre.png" id="2_iywne"]
 [ext_resource type="PackedScene" uid="uid://b2g1vk68fniy8" path="res://scenes/board.tscn" id="2_lnu2h"]
+[ext_resource type="Texture2D" uid="uid://oamh86dgjiq0" path="res://assets/bloc_1x3.png" id="2_p57ef"]
 [ext_resource type="PackedScene" uid="uid://b7k6ypojkd1y7" path="res://scenes/piece.tscn" id="3_lbhrr"]
-[ext_resource type="Texture2D" uid="uid://ciab2aqhg4fpm" path="res://assets/bloc.png" id="3_p57ef"]
+[ext_resource type="Texture2D" uid="uid://dsg8um10en2hi" path="res://assets/bloc_corner.png" id="3_u5sy4"]
 [ext_resource type="PackedScene" uid="uid://bok5dqqou7etv" path="res://scenes/hud.tscn" id="4_lbhrr"]
+[ext_resource type="Texture2D" uid="uid://f7vqa45nmvdp" path="res://assets/bg_gray.png" id="7_u5sy4"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iywne"]
-texture = ExtResource("2_iywne")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gee14"]
+texture = ExtResource("2_p57ef")
 0:0/0 = 0
 0:1/0 = 0
 0:2/0 = 0
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_u5sy4"]
-texture = ExtResource("3_p57ef")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0tnpc"]
+texture = ExtResource("3_u5sy4")
 0:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_u5sy4"]
-sources/2 = SubResource("TileSetAtlasSource_iywne")
-sources/3 = SubResource("TileSetAtlasSource_u5sy4")
+sources/4 = SubResource("TileSetAtlasSource_gee14")
+sources/5 = SubResource("TileSetAtlasSource_0tnpc")
 
 [node name="Game" type="Node2D" unique_id=978882619]
 script = ExtResource("1_uwrxv")
 
+[node name="GZ Control" type="Control" parent="." unique_id=2107575954]
+layout_mode = 3
+anchors_preset = 0
+offset_top = -32.0
+offset_right = 160.0
+offset_bottom = 320.0
+
+[node name="GZ Container" type="SubViewportContainer" parent="GZ Control" unique_id=478916275]
+clip_children = 2
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 512.0
+
+[node name="GZ SubViewport" type="SubViewport" parent="GZ Control/GZ Container" unique_id=1031678296]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(160, 352)
+render_target_update_mode = 4
+
+[node name="GZ Parallax" type="Parallax2D" parent="GZ Control/GZ Container/GZ SubViewport" unique_id=714196120]
+repeat_size = Vector2(64, 64)
+autoscroll = Vector2(0, 15)
+repeat_times = 13
+
+[node name="GZ Parallax Sprite" type="Sprite2D" parent="GZ Control/GZ Container/GZ SubViewport/GZ Parallax" unique_id=778697155]
+modulate = Color(0.28, 0.28, 0.28, 1)
+texture = ExtResource("7_u5sy4")
+
 [node name="BorderLayer" type="TileMapLayer" parent="." unique_id=93135918]
-modulate = Color(0.5528658, 0.428239, 0.35789162, 1)
-tile_map_data = PackedByteArray("AAD/////AgAAAAAAAAD//wAAAgAAAAEAAAD//wEAAgAAAAEAAAD//wIAAgAAAAEAAAD//wMAAgAAAAEAAAD//wQAAgAAAAEAAAD//wUAAgAAAAEAAAD//wYAAgAAAAEAAAD//wcAAgAAAAEAAAD//wgAAgAAAAEAAAD//wkAAgAAAAEAAAD//woAAgAAAAEAAAD//wsAAgAAAAEAAAD//wwAAgAAAAEAAAD//w0AAgAAAAEAAAD//w4AAgAAAAEAAAD//w8AAgAAAAEAAAD//xAAAgAAAAEAAAD//xEAAgAAAAEAAAD//xIAAgAAAAEAAAD//xMAAgAAAAIAAAABABQAAgAAAAEAAGACABQAAgAAAAEAAGADABQAAgAAAAEAAGAEABQAAgAAAAEAAGAFABQAAgAAAAEAAGAGABQAAgAAAAEAAGAHABQAAgAAAAEAAGAIABQAAgAAAAEAAGAJABQAAgAAAAIAAGAKABMAAgAAAAIAAAAKAP//AgAAAAAAAAAKAAAAAgAAAAEAAAAKAAEAAgAAAAEAAAAKAAIAAgAAAAEAAAAKAAMAAgAAAAEAAAAKAAQAAgAAAAEAAAAKAAUAAgAAAAEAAAAKAAYAAgAAAAEAAAAKAAcAAgAAAAEAAAAKAAgAAgAAAAEAAAAKAAkAAgAAAAEAAAAKAAoAAgAAAAEAAAAKAAsAAgAAAAEAAAAKAAwAAgAAAAEAAAAKAA0AAgAAAAEAAAAKAA4AAgAAAAEAAAAKAA8AAgAAAAEAAAAKABAAAgAAAAEAAAAKABEAAgAAAAEAAAAKABIAAgAAAAEAAAD//xQAAwAAAAAAAAAKABQAAwAAAAAAAAAAABQAAgAAAAAAAGD///7/AwAAAAAAAAAKAP7/AwAAAAAAAAA=")
+modulate = Color(0.2, 0.2, 0.2, 1)
+tile_map_data = PackedByteArray("AAD/////BAAAAAEAAAD//wAABAAAAAEAAAD//wEABAAAAAEAAAD//wIABAAAAAEAAAD//wMABAAAAAEAAAD//wQABAAAAAEAAAD//wUABAAAAAEAAAD//wYABAAAAAEAAAD//wcABAAAAAEAAAD//wgABAAAAAEAAAD//wkABAAAAAEAAAD//woABAAAAAEAAAD//wsABAAAAAEAAAD//wwABAAAAAEAAAD//w0ABAAAAAEAAAD//w4ABAAAAAEAAAD//w8ABAAAAAEAAAD//xAABAAAAAEAAAD//xEABAAAAAEAAAD//xIABAAAAAEAAAD//xMABQAAAAAAAAABABQABAAAAAEAAFACABQABAAAAAEAAFADABQABAAAAAEAAFAEABQABAAAAAEAAFAFABQABAAAAAEAAFAGABQABAAAAAEAAFAHABQABAAAAAEAAFAIABQABAAAAAEAAFAJABQABQABAAEAABAKABMABQAAAAAAABAKAP//BAAAAAEAAAAKAAAABAAAAAEAAAAKAAEABAAAAAEAAAAKAAIABAAAAAEAAAAKAAMABAAAAAEAAAAKAAQABAAAAAEAAAAKAAUABAAAAAEAAAAKAAYABAAAAAEAAAAKAAcABAAAAAEAAAAKAAgABAAAAAEAAAAKAAkABAAAAAEAAAAKAAoABAAAAAEAAAAKAAsABAAAAAEAAAAKAAwABAAAAAEAAAAKAA0ABAAAAAEAAAAKAA4ABAAAAAEAAAAKAA8ABAAAAAEAAAAKABAABAAAAAEAAAAKABEABAAAAAEAAAAKABIABAAAAAEAAAD//xQABQAAAAEAAAAKABQABQAAAAEAABAAABQABQABAAEAAAD///7/BAAAAAAAAAAKAP7/BAAAAAAAAAA=")
 tile_set = SubResource("TileSet_u5sy4")
 
 [node name="Board" parent="." unique_id=1248008375 instance=ExtResource("2_lnu2h")]
