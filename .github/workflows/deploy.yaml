@@ -2,7 +2,7 @@ name: "Export et Déploiement Web"
 on:
   push:
     branches:
-      - main  # Ajustez si votre branche principale s'appelle 'master'
+      - master  # Ajustez si votre branche principale s'appelle 'master'
 
 permissions:
   contents: write
