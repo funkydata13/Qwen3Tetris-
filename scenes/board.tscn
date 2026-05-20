@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://b2g1vk68fniy8"]
+
+[ext_resource type="Script" uid="uid://b4u4xte85binu" path="res://scripts/board.gd" id="1_bw3vb"]
+[ext_resource type="Texture2D" uid="uid://ciab2aqhg4fpm" path="res://assets/bloc.png" id="2_tx6nw"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_nglv8"]
+texture = ExtResource("2_tx6nw")
+0:0/next_alternative_id = 8
+0:0/0 = 0
+0:0/1 = 1
+0:0/1/modulate = Color(1, 1, 0, 1)
+0:0/2 = 2
+0:0/2/modulate = Color(0, 1, 1, 1)
+0:0/3 = 3
+0:0/3/modulate = Color(0.62199986, 0.45999998, 1, 1)
+0:0/4 = 4
+0:0/4/modulate = Color(1, 0.20999998, 0.20999998, 1)
+0:0/5 = 5
+0:0/5/modulate = Color(0.39, 0.5425, 1, 1)
+0:0/6 = 6
+0:0/6/modulate = Color(0.42583346, 1, 0.35000002, 1)
+0:0/7 = 7
+0:0/7/modulate = Color(1, 0.47000003, 0.98233336, 1)
+
+[sub_resource type="TileSet" id="TileSet_fv4ni"]
+sources/0 = SubResource("TileSetAtlasSource_nglv8")
+
+[node name="Board" type="Node2D" unique_id=1248008375]
+script = ExtResource("1_bw3vb")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1154914877]
+tile_set = SubResource("TileSet_fv4ni")

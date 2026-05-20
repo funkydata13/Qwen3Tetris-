@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://bok5dqqou7etv"]
+
+[ext_resource type="Script" uid="uid://7ubnkvdi0rwr" path="res://scripts/hud.gd" id="1_ahhtf"]
+
+[node name="HUD" type="CanvasLayer" unique_id=154649927]
+script = ExtResource("1_ahhtf")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=750010169]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=2035829520]
+layout_mode = 2
+
+[node name="ScoreLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=2060503515]
+layout_mode = 2
+
+[node name="LinesLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1326570400]
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=746740348]
+layout_mode = 2
+
+[node name="GameOverLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1953835526]
+visible = false
+layout_mode = 2
