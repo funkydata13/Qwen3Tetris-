@@ -48,41 +48,95 @@ func clear_grid() -> void:
 	tile_map_layer.clear()
 
 func check_and_clear_lines() -> int:
-	# Utiliser une boucle while au lieu d'une boucle for pour gérer correctement
-	# les lignes consécutives pleines
-	var current_row = ROWS - 1
 	var cleared_count: int = 0
-
-	while current_row >= 0:
-		# Vérifier si la ligne est pleine
+	
+	# Collecte les lignes pleines
+	var full_lines = []
+	for row in range(ROWS):
 		var line_full = true
 		for col in range(COLS):
-			if grid[col][current_row] == null:
+			if grid[col][row] == null:
 				line_full = false
 				break
-
 		if line_full:
-			# Supprimer la ligne et faire glisser les lignes au-dessus
-			cleared_count += 1
-			for r in range(current_row, 0, -1):
-				# Copier chaque cellule de la ligne du dessus vers la ligne actuelle
-				for col in range(COLS):
-					grid[col][r] = grid[col][r - 1]
-					if grid[col][r] != null:
-						tile_map_layer.set_cell(Vector2i(col, r), 0, Vector2i(0, 0), grid[col][r])
-					else:
-						tile_map_layer.set_cell(Vector2i(col, r), -1)
+			full_lines.append(row)
+	
+	# Si aucune ligne n'est pleine, on sort
+	if full_lines.size() == 0:
+		return 0
+	
+	# Trier les lignes pleines par ordre croissant pour le traitement
+	full_lines.sort()
+	
+	# Appliquer l'effet de flash sur les lignes pleines
+	var flash_interval = 0.06
 
-			# Vider la ligne du haut
+	# Flash 1 - On passe les blocs en blanc éclatant (Alternative ID 8)
+	for row in full_lines:
+		for col in range(COLS):
+			var coords = Vector2i(col, row)
+			if grid[col][row] != null:
+				tile_map_layer.set_cell(coords, 0, Vector2i(0, 0), 8)
+
+	await get_tree().create_timer(flash_interval).timeout
+
+	# Flash 2 - On restaure la couleur d'origine (tile_id)
+	for row in full_lines:
+		for col in range(COLS):
+			var coords = Vector2i(col, row)
+			var tile_id = grid[col][row]
+			if tile_id != null:
+				tile_map_layer.set_cell(coords, 0, Vector2i(0, 0), tile_id)
+
+	await get_tree().create_timer(flash_interval).timeout
+
+	# Flash 3 - Deuxième coup de blanc
+	for row in full_lines:
+		for col in range(COLS):
+			var coords = Vector2i(col, row)
+			if grid[col][row] != null:
+				tile_map_layer.set_cell(coords, 0, Vector2i(0, 0), 8)
+
+	await get_tree().create_timer(flash_interval).timeout
+
+	# Flash 4 - Retour aux couleurs une fraction de seconde avant la disparition
+	for row in full_lines:
+		for col in range(COLS):
+			var coords = Vector2i(col, row)
+			var tile_id = grid[col][row]
+			if tile_id != null:
+				tile_map_layer.set_cell(coords, 0, Vector2i(0, 0), tile_id)
+				
+	await get_tree().create_timer(flash_interval).timeout
+		
+	# Supprimer les lignes
+	for row in full_lines:
+		for col in range(COLS):
+			grid[col][row] = null
+			tile_map_layer.set_cell(Vector2i(col, row), -1)
+	
+	# Algorithme de reconstruction du bas vers le haut pour éviter les "double shifts"
+	var write_row = ROWS - 1
+	
+	# Parcourir l'ancienne grille du bas vers le haut
+	for read_row in range(ROWS - 1, -1, -1):
+		# Si la ligne n'est pas pleine (donc non supprimée)
+		if not read_row in full_lines:
+			# Copier toutes les colonnes de la ligne lue vers la ligne d'écriture
 			for col in range(COLS):
-				grid[col][0] = null
-				tile_map_layer.set_cell(Vector2i(col, 0), -1)
-
-			# Ne pas décrémenter current_row car la ligne qui vient de descendre
-			# doit être réévaluée au prochain tour
-		else:
-			# Si la ligne n'est pas pleine, passer à la ligne au-dessus
-			current_row -= 1
-
-	return cleared_count
-
+				grid[col][write_row] = grid[col][read_row]
+				if grid[col][write_row] != null:
+					tile_map_layer.set_cell(Vector2i(col, write_row), 0, Vector2i(0, 0), grid[col][write_row])
+				else:
+					tile_map_layer.set_cell(Vector2i(col, write_row), -1)
+			
+			# Décrémenter le pointeur d'écriture
+			write_row -= 1
+	
+	# Remplir le reste du haut avec des cases vides
+	for row in range(write_row, -1, -1):
+		for col in range(COLS):
+			grid[col][row] = null
+			tile_map_layer.set_cell(Vector2i(col, row), -1)
+	
+	return full_lines.size()

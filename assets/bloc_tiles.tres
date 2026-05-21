@@ -1,0 +1,27 @@
+[gd_resource type="TileSet" format=3 uid="uid://cmf384owhgw3f"]
+
+[ext_resource type="Texture2D" uid="uid://ciab2aqhg4fpm" path="res://assets/bloc.png" id="1_fk8yn"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_nglv8"]
+texture = ExtResource("1_fk8yn")
+0:0/next_alternative_id = 9
+0:0/0 = 0
+0:0/1 = 1
+0:0/1/modulate = Color(0, 1, 1, 1)
+0:0/2 = 2
+0:0/2/modulate = Color(1, 1, 0, 1)
+0:0/3 = 3
+0:0/3/modulate = Color(0.75, 0.1875, 0.75, 1)
+0:0/4 = 4
+0:0/4/modulate = Color(0, 1, 0, 1)
+0:0/5 = 5
+0:0/5/modulate = Color(1, 0.07999998, 0.07999998, 1)
+0:0/6 = 6
+0:0/6/modulate = Color(0.120000005, 0.44266677, 1, 1)
+0:0/7 = 7
+0:0/7/modulate = Color(1.0309138, 0.5162627, 0, 1)
+0:0/8 = 8
+0:0/8/modulate = Color(1.8247963, 1.8247963, 1.8247963, 1)
+
+[resource]
+sources/0 = SubResource("TileSetAtlasSource_nglv8")
