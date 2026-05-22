@@ -20,6 +20,7 @@ const TETROMINO_TILE_IDS = {
 	"L": 7
 }
 
+var is_active:bool = false
 var type: String
 var position_grille: Vector2i
 var blocs: Array[Vector2i]
@@ -31,6 +32,7 @@ func initialize(p_type: String, start_pos: Vector2i) -> void:
 	blocs = []
 	blocs.assign(TETROMINOS[p_type])
 	alternative_id = TETROMINO_TILE_IDS[p_type]
+	is_active = true
 
 func move(direction: Vector2i) -> void:
 	position_grille += direction

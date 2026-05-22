@@ -5,6 +5,7 @@ const ROWS = 20
 const TILE_SIZE = 16
 
 var grid: Array[Variant] = []
+var is_animating: bool = false
 
 @onready var tile_map_layer = $TileMapLayer
 
@@ -48,6 +49,12 @@ func clear_grid() -> void:
 	tile_map_layer.clear()
 
 func check_and_clear_lines() -> int:
+	# Si on est déjà en train d'animer, on ne fait rien
+	if is_animating:
+		return 0
+	
+	is_animating = true # Indique que nous commençons l'animation
+	
 	var cleared_count: int = 0
 	
 	# Collecte les lignes pleines
@@ -63,6 +70,7 @@ func check_and_clear_lines() -> int:
 	
 	# Si aucune ligne n'est pleine, on sort
 	if full_lines.size() == 0:
+		is_animating = false
 		return 0
 	
 	# Trier les lignes pleines par ordre croissant pour le traitement
@@ -138,5 +146,7 @@ func check_and_clear_lines() -> int:
 		for col in range(COLS):
 			grid[col][row] = null
 			tile_map_layer.set_cell(Vector2i(col, row), -1)
+	
+	is_animating = false # Fin de l'animation
 	
 	return full_lines.size()

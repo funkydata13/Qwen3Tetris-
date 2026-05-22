@@ -1,0 +1,353 @@
+[gd_scene format=3 uid="uid://q5ibubhekdpi"]
+
+[ext_resource type="Script" uid="uid://co0cppoih6mym" path="res://scripts/game_ui.gd" id="1_game_ui"]
+[ext_resource type="FontFile" uid="uid://fl02kbiixwpx" path="res://assets/PixeloidMono.ttf" id="2_font"]
+[ext_resource type="Texture2D" uid="uid://sd5duftu47n6" path="res://assets/ui_patch.png" id="3_patch"]
+
+[node name="GameUI" type="CanvasLayer" unique_id=574605889]
+script = ExtResource("1_game_ui")
+
+[node name="HUD" type="Control" parent="." unique_id=1178737616]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HUDMargin" type="MarginContainer" parent="HUD" unique_id=7838661]
+custom_minimum_size = Vector2(80, 104)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 104.0
+offset_top = 16.0
+offset_right = 184.0
+offset_bottom = 120.0
+grow_horizontal = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/HUDMargin" unique_id=1789086620]
+layout_mode = 2
+
+[node name="Score NinePatchRect" type="NinePatchRect" parent="HUD/HUDMargin/VBoxContainer" unique_id=1460384397]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+texture = ExtResource("3_patch")
+patch_margin_left = 8
+patch_margin_top = 8
+patch_margin_right = 8
+patch_margin_bottom = 8
+
+[node name="ScoreInfo" type="Label" parent="HUD/HUDMargin/VBoxContainer/Score NinePatchRect" unique_id=1245330280]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 47.0
+offset_bottom = 16.0
+theme_override_colors/font_color = Color(0.219501, 0.219501, 0.219501, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "Score"
+
+[node name="ScoreLabel" type="Label" parent="HUD/HUDMargin/VBoxContainer/Score NinePatchRect" unique_id=705251415]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 33.0
+offset_top = 16.0
+offset_right = 73.0
+offset_bottom = 27.0
+theme_override_colors/font_color = Color(0.38, 0.38, 0.38, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "0"
+horizontal_alignment = 2
+
+[node name="Lines  NinePatchRect" type="NinePatchRect" parent="HUD/HUDMargin/VBoxContainer" unique_id=1799984683]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+texture = ExtResource("3_patch")
+patch_margin_left = 8
+patch_margin_top = 8
+patch_margin_right = 8
+patch_margin_bottom = 8
+
+[node name="LinesInfo" type="Label" parent="HUD/HUDMargin/VBoxContainer/Lines  NinePatchRect" unique_id=1308829121]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 47.0
+offset_bottom = 16.0
+theme_override_colors/font_color = Color(0.219501, 0.219501, 0.219501, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "Lines"
+
+[node name="LinesLabel" type="Label" parent="HUD/HUDMargin/VBoxContainer/Lines  NinePatchRect" unique_id=14247770]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 33.0
+offset_top = 16.0
+offset_right = 73.0
+offset_bottom = 27.0
+theme_override_colors/font_color = Color(0.38, 0.38, 0.38, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "0"
+horizontal_alignment = 2
+
+[node name="Level  NinePatchRect" type="NinePatchRect" parent="HUD/HUDMargin/VBoxContainer" unique_id=1670021688]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+texture = ExtResource("3_patch")
+patch_margin_left = 8
+patch_margin_top = 8
+patch_margin_right = 8
+patch_margin_bottom = 8
+
+[node name="LevelInfo" type="Label" parent="HUD/HUDMargin/VBoxContainer/Level  NinePatchRect" unique_id=2044207747]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 47.0
+offset_bottom = 16.0
+theme_override_colors/font_color = Color(0.219501, 0.219501, 0.219501, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "Level"
+
+[node name="LevelLabel" type="Label" parent="HUD/HUDMargin/VBoxContainer/Level  NinePatchRect" unique_id=2018498598]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 33.0
+offset_top = 16.0
+offset_right = 73.0
+offset_bottom = 27.0
+theme_override_colors/font_color = Color(0.38, 0.38, 0.38, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "1"
+horizontal_alignment = 2
+
+[node name="Piece  NinePatchRect" type="NinePatchRect" parent="HUD/HUDMargin/VBoxContainer" unique_id=1121440250]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+texture = ExtResource("3_patch")
+patch_margin_left = 8
+patch_margin_top = 8
+patch_margin_right = 8
+patch_margin_bottom = 8
+
+[node name="PieceInfo" type="Label" parent="HUD/HUDMargin/VBoxContainer/Piece  NinePatchRect" unique_id=599329304]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 47.0
+offset_bottom = 16.0
+theme_override_colors/font_color = Color(0.219501, 0.219501, 0.219501, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "Next"
+
+[node name="Leaderboard" type="Control" parent="." unique_id=2126649996]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LBMargin" type="MarginContainer" parent="Leaderboard" unique_id=146394591]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 16.0
+offset_right = 168.0
+offset_bottom = 205.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Leaderboard/LBMargin" unique_id=976889611]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Leaderboard/LBMargin/VBoxContainer" unique_id=661189613]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.815686, 0.733333, 0.713726, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 18
+text = "FUNKYTETRIS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LeaderboardLabel" type="Label" parent="Leaderboard/LBMargin/VBoxContainer" unique_id=1600327135]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.741176, 0.741176, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "leaderboard"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LB  NinePatchRect" type="NinePatchRect" parent="Leaderboard/LBMargin/VBoxContainer" unique_id=1796727263]
+custom_minimum_size = Vector2(0, 148)
+layout_mode = 2
+texture = ExtResource("3_patch")
+patch_margin_left = 8
+patch_margin_top = 8
+patch_margin_right = 8
+patch_margin_bottom = 8
+
+[node name="LB List" type="Label" parent="Leaderboard/LBMargin/VBoxContainer/LB  NinePatchRect" unique_id=782022353]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 7.0
+offset_top = 6.0
+offset_right = 85.0
+offset_bottom = 143.0
+theme_override_colors/font_color = Color(0.219608, 0.219608, 0.219608, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "01.FNK - 0000"
+
+[node name="ControlsLabel" type="Label" parent="Leaderboard/LBMargin/VBoxContainer" unique_id=194199077]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "FLECHE HAUT - ROTATION
+ESC/P - PAUSE"
+horizontal_alignment = 1
+
+[node name="GameOverControl" type="Control" parent="." unique_id=130839038]
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GO  NinePatchRect" type="NinePatchRect" parent="GameOverControl" unique_id=1917533241]
+self_modulate = Color(0.362829, 0.362829, 0.362829, 1)
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -64.0
+offset_top = -48.0
+offset_right = 64.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_patch")
+patch_margin_left = 8
+patch_margin_top = 8
+patch_margin_right = 8
+patch_margin_bottom = 8
+
+[node name="GameOverZone" type="VBoxContainer" parent="GameOverControl" unique_id=1158299789]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -51.0
+offset_top = -52.5
+offset_right = 51.0
+offset_bottom = 52.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameOverLabel" type="Label" parent="GameOverControl/GameOverZone" unique_id=1574310836]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.4902, 0.4902, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 16
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="ScoreZone" type="VBoxContainer" parent="GameOverControl/GameOverZone" unique_id=526348356]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="NewScoreLabel" type="Label" parent="GameOverControl/GameOverZone/ScoreZone" unique_id=1113304364]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.483841, 0.798616, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "- Nouveau Score -"
+
+[node name="NameInput" type="LineEdit" parent="GameOverControl/GameOverZone/ScoreZone" unique_id=99614358]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 16
+alignment = 1
+max_length = 3
+
+[node name="NoScoreLabel" type="Label" parent="GameOverControl/GameOverZone" unique_id=261866430]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.779291, 0.779291, 0.779291, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "- Pas de Top 10 -
+
+"
+
+[node name="RestartButton" type="Button" parent="GameOverControl/GameOverZone" unique_id=1035265201]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.706284, 0.902618, 0.329531, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "REJOUER"
+
+[node name="PauseOverlay" type="Control" parent="." unique_id=325919067]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="PauseOverlay" unique_id=1980267219]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.313726)
+
+[node name="PauseLabel" type="Label" parent="PauseOverlay" unique_id=1863548474]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -33.0
+offset_top = -10.0
+offset_right = 33.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 16
+text = "PAUSE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="text_changed" from="GameOverControl/GameOverZone/ScoreZone/NameInput" to="." method="_on_name_input_text_changed"]
+[connection signal="text_submitted" from="GameOverControl/GameOverZone/ScoreZone/NameInput" to="." method="_on_name_input_text_submitted"]
+[connection signal="pressed" from="GameOverControl/GameOverZone/RestartButton" to="." method="_on_restart_button_pressed"]

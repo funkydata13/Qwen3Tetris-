@@ -2,10 +2,14 @@ extends Node2D
 
 @onready var board = $Board
 @onready var piece = $Piece
-@onready var hud = $HUD
+@onready var game_ui = $GameUI
 
 var game_over: bool = false
-var fall_timer: Timer
+
+var fall_stopwatch: float = 0.0
+var fall_delay: float = 0.5 
+var fall_delay_at_level_1:float = 0.5
+
 var score: int = 0
 var lines_cleared_total: int = 0
 var level: int = 1
@@ -34,26 +38,32 @@ var next_piece_layer_position: Vector2
 signal score_changed(new_score: int)
 signal level_changed(new_level: int)
 signal lines_changed(new_lines: int)
-signal game_over_triggered
+signal game_over_triggered(score: int)
 
-func _ready() -> void:
-	# Initialisation du timer de chute
-	fall_timer = Timer.new()
-	fall_timer.autostart = true
-	fall_timer.wait_time = base_fall_time
-	fall_timer.timeout.connect(_on_fall_timer_timeout)
-	add_child(fall_timer)
-	fall_timer.start()
-	
+func _ready() -> void:	
 	# Connexion des signaux à l'HUD
-	score_changed.connect(hud.update_score)
-	level_changed.connect(hud.update_level)
-	lines_changed.connect(hud.update_lines)
-	game_over_triggered.connect(hud.display_game_over)
+	score_changed.connect(game_ui.update_score)
+	level_changed.connect(game_ui.update_level)
+	lines_changed.connect(game_ui.update_lines)
+	game_over_triggered.connect(game_ui.game_over)
 
 	next_piece_layer_position = %NextPieceDisplay.position
 	
+	# Permettre à ce script de tourner même en pause pour intercepter la touche P
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	
 	start_new_game()
+
+func toggle_pause() -> void:
+	var new_pause_state = !get_tree().paused
+	get_tree().paused = new_pause_state
+	game_ui.show_pause(new_pause_state)
+
+# Gestion de la perte de focus (fenêtre réduite ou clic ailleurs)
+# func _notification(what):
+#	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+#		if not game_over and not get_tree().paused:
+#			toggle_pause()
 
 func try_rotate(clockwise: bool) -> bool:
 	# EXCLUSION DU CARRÉ : Si c'est la pièce O, on ne fait absolument rien
@@ -111,7 +121,12 @@ func try_rotate(clockwise: bool) -> bool:
 	return false
 
 func _input(event: InputEvent) -> void:
-	if game_over:
+	# On autorise la touche pause même si game_over est faux
+	if (Input.is_key_pressed(KEY_P) or Input.is_key_pressed(KEY_ESCAPE)) and event.is_pressed() and not event.is_echo():
+		if not game_over:
+			toggle_pause()
+
+	if game_over or get_tree().paused:
 		return
 	
 	# Gestion de la rotation - ne doit se déclencher qu'une seule fois par appui
@@ -119,7 +134,29 @@ func _input(event: InputEvent) -> void:
 		try_rotate(true)
 
 func _process(delta: float) -> void:
-	if game_over:
+	if game_over or get_tree().paused:
+		return
+	
+	# 1. Si le plateau est en train de clignoter, on freeze TOUT le flux du jeu
+	if board.is_animating:
+		return
+		
+	# 2. Si l'animation vient de finir et qu'aucune pièce n'est active :
+	# Le spawn se déclenche IMMÉDIATEMENT à la frame près !
+	if not piece.is_active:
+		spawn_piece()
+		return
+		
+	# 3. Gestion de la chute normale (si une pièce est active)
+	if piece.is_active:
+		fall_stopwatch -= delta
+		if fall_stopwatch <= 0:
+			fall_stopwatch = fall_delay # On reset le chrono
+			
+			# On tente de descendre la pièce
+			if not move_piece(Vector2i(0, 1)):
+				lock_piece()
+	else:
 		return
 	
 	for action in das_timers.keys():
@@ -130,7 +167,7 @@ func _process(delta: float) -> void:
 			
 			# Si on appuie sur BAS, on reset le timer de chute pour éviter le télescopage
 			if action == "ui_down":
-				fall_timer.start()
+				fall_stopwatch = fall_delay
 				
 		elif Input.is_action_pressed(action):
 			# Action maintenue
@@ -145,7 +182,7 @@ func _process(delta: float) -> void:
 					
 					# Reset aussi lors du premier déclenchement du DAS sur BAS
 					if action == "ui_down":
-						fall_timer.start()
+						fall_stopwatch = fall_delay
 			else:
 				# DAS actif : mouvement régulier selon l'intervalle
 				if das_timers[action] >= DAS_INTERVAL:
@@ -154,7 +191,7 @@ func _process(delta: float) -> void:
 					
 					# Reset à chaque pas de répétition en restant appuyé sur BAS
 					if action == "ui_down":
-						fall_timer.start()
+						fall_stopwatch = fall_delay
 		else:
 			# Touche relâchée
 			das_timers[action] = 0.0
@@ -178,7 +215,7 @@ func start_new_game() -> void:
 	score = 0
 	lines_cleared_total = 0
 	level = 1
-	fall_timer.wait_time = base_fall_time
+	fall_stopwatch = fall_delay
 	
 	# Émission des signaux pour l'UI
 	score_changed.emit(score)
@@ -192,6 +229,11 @@ func start_new_game() -> void:
 	spawn_piece()
 
 func spawn_piece() -> void:
+	# Vérification si le board est en train d'animer
+	if board.is_animating:
+		# Si oui, on ne fait pas le spawn maintenant, on attend
+		return
+	
 	# 1. La pièce de jeu devient celle qui était en attente
 	var type_actuel = next_piece_type
 	var position_depart = Vector2i(4, 0)
@@ -206,9 +248,8 @@ func spawn_piece() -> void:
 	
 	if not positions_libres:
 		game_over = true
-		fall_timer.stop()
 		print("GAME OVER")
-		game_over_triggered.emit()
+		game_over_triggered.emit(score)
 		return
 	
 	# 3. On fait apparaître la pièce active sur le plateau
@@ -273,13 +314,6 @@ func draw_piece(is_active: bool) -> void:
 		else:
 			board.set_cell_status(absolute_pos.x, absolute_pos.y, -1)
 
-func _on_fall_timer_timeout() -> void:
-	if game_over:
-		return
-	
-	if not move_piece(Vector2i(0, 1)):
-		lock_piece()
-
 func move_piece(direction: Vector2i) -> bool:
 	var future_positions = piece.get_next_move_positions(direction)
 	
@@ -309,6 +343,9 @@ func lock_piece() -> void:
 		var absolute_pos = piece.position_grille + bloc
 		board.set_cell_status(absolute_pos.x, absolute_pos.y, piece.alternative_id)
 	
+	piece.is_active = false
+
+	# Appel asynchrone mais sans attendre ici
 	var lines_cleared = await board.check_and_clear_lines()
 	
 	if lines_cleared > 0:
@@ -334,16 +371,16 @@ func lock_piece() -> void:
 		# Calculer le niveau actuel
 		var new_level = lines_cleared_total / 10 + 1
 		if new_level > level:
-			level = int(new_level)
-			
+			level = int(new_level)			
 			# Ajuster dynamiquement la vitesse du jeu
-			fall_timer.wait_time = max(0.05, base_fall_time - (level - 1) * 0.05)
-		
+			fall_delay = max(0.05, fall_delay_at_level_1 - (level - 1) * 0.05)
+
 		print("Score: ", score, " | Lignes: ", lines_cleared_total, " | Niveau: ", level)
 		
 		# Émission des signaux pour l'UI
 		score_changed.emit(score)
 		level_changed.emit(level)
 		lines_changed.emit(lines_cleared_total)
-	
-	spawn_piece()
+
+		if not board.is_animating:
+			spawn_piece()
