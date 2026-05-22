@@ -15,8 +15,6 @@ func update_level(p_level: int) -> void:
 	level_label.text = str(p_level)
 
 # --- Leaderboard & GameOver logic ---
-
-# TES IDENTIFIANTS SILENTWOLF (À REMPLIR)
 const SUPABASE_URL = "https://sjcvgtglrmntoocjlxif.supabase.co" # Ta vraie URL ici
 const SUPABASE_KEY = "sb_publishable_3aC74szqX1058Nzqs5xuYg_njZ_1DhV"       # Ta vraie clé ici
 
@@ -102,7 +100,7 @@ func upload_new_score(player_name: String, new_score: int) -> void:
 func _on_request_completed(result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
 	# Supabase répond 200 pour une lecture réussie, et 201 pour une écriture réussie
 	if result != HTTPRequest.RESULT_SUCCESS or (response_code != 200 and response_code != 201 and response_code != 204):
-		print("Échec de la requête HTTP. Code reçu : ", response_code)
+		print("ERREUR - Result Godot : ", result, " | Code HTTP : ", response_code)
 		lb_list.text = "Erreur serveur\nCode: " + str(response_code)
 		return
 
