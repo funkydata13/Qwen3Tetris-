@@ -101,7 +101,7 @@ func _on_request_completed(result: int, response_code: int, _headers: PackedStri
 	# Supabase répond 200 pour une lecture réussie, et 201 pour une écriture réussie
 	if result != HTTPRequest.RESULT_SUCCESS or (response_code != 200 and response_code != 201 and response_code != 204):
 		print("ERREUR - Result Godot : ", result, " | Code HTTP : ", response_code)
-		lb_list.text = "Erreur serveur\nCode: " + str(response_code)
+		lb_list.text = "Erreur serveur\nCode: " + str(response_code) + " - " + str(result)
 		return
 
 	# Si on vient d'envoyer un score avec succès, on rafraîchit immédiatement l'affichage
