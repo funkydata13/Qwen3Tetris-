@@ -279,6 +279,7 @@ func spawn_piece() -> void:
 	
 	if not positions_libres:
 		game_over = true
+		AudioManager.stop_music()
 		AudioManager.play_sfx("game_over")
 		game_over_triggered.emit(score)
 		return
