@@ -37,13 +37,15 @@ var sfx_library: Dictionary = {
 }
 
 var bgm_library: Dictionary = {
-	"main_theme": preload("res://assets/tetris_theme.wav")
+	"main_theme": preload("res://assets/tetris_theme.wav"),
+	"alt_theme": preload("res://assets/hidden_tetris_theme.wav")
 }
 
 # --- Nœuds internes ---
 var music_player: AudioStreamPlayer
 var sfx_players: Array[AudioStreamPlayer] = []
 var max_sfx_players: int = 8
+var current_music_theme: String
 
 func _ready() -> void:
 	# Initialisation du lecteur de musique
@@ -68,7 +70,8 @@ func play_music(music_name: String, fade_duration: float = 1.0) -> void:
 		
 	if music_player.stream == bgm_library[music_name] and music_player.playing:
 		return # Déjà en train de jouer
-		
+	
+	current_music_theme = music_name
 	music_player.stream = bgm_library[music_name]
 	music_player.play()
 	# Note: Pour un vrai fondu (fade), il faudrait utiliser un Tween.
@@ -81,6 +84,13 @@ func pause_music() -> void:
 
 func resume_music() -> void:
 	music_player.stream_paused = false
+
+func toggle_music() -> void:
+	music_player.stream_paused = not music_player.stream_paused
+
+func switch_music() -> void:
+	var new_theme = "alt_theme" if current_music_theme == "main_theme" else "main_theme"
+	play_music(new_theme)
 
 # 💥 Gestion des Effets Sonores
 func play_sfx(sfx_name: String) -> void:

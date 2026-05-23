@@ -182,9 +182,9 @@ mouse_filter = 2
 [node name="LBMargin" type="MarginContainer" parent="Leaderboard" unique_id=146394591]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 16.0
+offset_top = 8.0
 offset_right = 168.0
-offset_bottom = 205.0
+offset_bottom = 353.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Leaderboard/LBMargin" unique_id=976889611]
 layout_mode = 2
@@ -235,7 +235,8 @@ theme_override_font_sizes/font_size = 9
 text = "L/R ARROW - DIRECTION
 UP ARROW - ROTATION
 SPACE - BANK TOGGLE
-ESC/P - PAUSE"
+ESC/P - PAUSE
+M - MUTE MUSIC"
 horizontal_alignment = 1
 
 [node name="ControlsLabel2" type="Label" parent="Leaderboard/LBMargin/VBoxContainer" unique_id=1838836355]
@@ -381,6 +382,24 @@ theme_override_font_sizes/font_size = 16
 text = "PAUSE"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="VersionLabel" type="Label" parent="." unique_id=764568495]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -101.0
+offset_top = -31.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "version 1.01"
+horizontal_alignment = 2
+vertical_alignment = 2
 
 [connection signal="text_changed" from="GameOverControl/GameOverZone/ScoreZone/NameInput" to="." method="_on_name_input_text_changed"]
 [connection signal="text_submitted" from="GameOverControl/GameOverZone/ScoreZone/NameInput" to="." method="_on_name_input_text_submitted"]

@@ -142,6 +142,13 @@ func _input(event: InputEvent) -> void:
 		if not game_over:
 			toggle_pause()
 
+	if Input.is_key_pressed(KEY_M):
+		if not Input.is_key_pressed(KEY_ALT):
+			AudioManager.toggle_music()
+		else:
+			print_debug('pass')
+			AudioManager.switch_music()
+
 	if game_over or get_tree().paused:
 		return
 	
@@ -293,8 +300,6 @@ func update_next_piece_preview() -> void:
 	var preview_id = piece.TETROMINO_TILE_IDS[next_piece_type]
 	var offset = get_piece_offset(next_piece_type, next_piece_display, next_piece_layer_position)
 
-	print_debug('calcul offset piece suivante')
-	
 	# Dessin final de la forme intacte
 	for bloc in blocs_suivants:
 		var pos_finale = bloc + offset
@@ -310,8 +315,6 @@ func update_stored_piece_preview() -> void:
 	var preview_id = piece.TETROMINO_TILE_IDS[bank_piece_type]
 	var offset = get_piece_offset(bank_piece_type, bank_piece_display, bank_piece_layer_position)
 	
-	print_debug('calcul offset piece banque')
-
 	for bloc in blocs_suivants:
 		var pos_finale = bloc + offset
 		bank_piece_display.set_cell(pos_finale, 0, Vector2i(0, 0), preview_id)
@@ -447,11 +450,13 @@ func lock_piece() -> void:
 		score += points
 		
 		# Calculer le niveau actuel
-		var new_level = lines_cleared_total / 10 + 1
+		var new_level = (lines_cleared_total / 10) + 1
 		if new_level > level:
-			level = int(new_level)			
-			# Ajuster dynamiquement la vitesse du jeu
-			fall_delay = max(0.05, fall_delay_at_level_1 - (level - 1) * 0.05)
+			level = int(new_level)          
+			
+			# Formule exponentielle : chaque niveau est ~15% plus rapide que le précédent
+			# On applique un max() pour ne pas descendre en dessous d'une frame de rendu (0.016s)
+			fall_delay = max(0.03, 0.8 * pow(0.85, level - 1))
 
 		print("Score: ", score, " | Lignes: ", lines_cleared_total, " | Niveau: ", level)
 		
