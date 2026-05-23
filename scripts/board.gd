@@ -72,6 +72,11 @@ func check_and_clear_lines() -> int:
 	if full_lines.size() == 0:
 		is_animating = false
 		return 0
+
+	if full_lines.size() >= 4:
+		AudioManager.play_sfx("tetris")
+	else:
+		AudioManager.play_sfx("line_clear")
 	
 	# Trier les lignes pleines par ordre croissant pour le traitement
 	full_lines.sort()

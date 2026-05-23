@@ -16,7 +16,7 @@ var level: int = 1
 var base_fall_time: float = 0.5
 
 # Configuration du DAS (Delayed Auto-Shift)
-const DAS_DELAY = 0.6
+const DAS_DELAY = 0.3
 const DAS_INTERVAL = 0.1
 var das_timers = {
 	"ui_left": 0.0,
@@ -30,9 +30,15 @@ var is_das_active = {
 }
 
 # Gestion de l'affichage de la pièce suivante
-@onready var next_piece_display = %NextPieceDisplay # Notre nouveau layer de preview
+@onready var next_piece_display: TileMapLayer = %NextPieceDisplay # Notre nouveau layer de preview
 var next_piece_type: String = "" # Stocke le type de la PROCHAINE pièce
 var next_piece_layer_position: Vector2
+
+var bank_piece_type: String = "" # Vide si pas de pièce en banque
+@onready var bank_piece_display: TileMapLayer = %BankPieceDisplay
+var bank_piece_layer_position: Vector2
+
+var tetromino_types: Array = []
 
 # Signaux personnalisés pour l'UI
 signal score_changed(new_score: int)
@@ -48,16 +54,26 @@ func _ready() -> void:
 	game_over_triggered.connect(game_ui.game_over)
 
 	next_piece_layer_position = %NextPieceDisplay.position
+	bank_piece_layer_position = %BankPieceDisplay.position
+	
+	tetromino_types = piece.TETROMINOS.keys()
 	
 	# Permettre à ce script de tourner même en pause pour intercepter la touche P
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	
 	start_new_game()
+	# Lancer la musique
+	AudioManager.play_music("main_theme")
 
 func toggle_pause() -> void:
 	var new_pause_state = !get_tree().paused
 	get_tree().paused = new_pause_state
 	game_ui.show_pause(new_pause_state)
+
+	if new_pause_state:
+		AudioManager.pause_music()
+	else:
+		AudioManager.resume_music()
 
 # Gestion de la perte de focus (fenêtre réduite ou clic ailleurs)
 # func _notification(what):
@@ -130,8 +146,13 @@ func _input(event: InputEvent) -> void:
 		return
 	
 	# Gestion de la rotation - ne doit se déclencher qu'une seule fois par appui
-	if Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("ui_up"):
-		try_rotate(true)
+	if Input.is_action_just_pressed("ui_up"):
+		if try_rotate(true):
+			AudioManager.play_sfx("rotate")
+	
+	if event.is_action_pressed("ui_accept"): # Ou ta touche Espace
+		AudioManager.play_sfx("bank")
+		handle_bank_mechanic()
 
 func _process(delta: float) -> void:
 	if game_over or get_tree().paused:
@@ -162,12 +183,15 @@ func _process(delta: float) -> void:
 	for action in das_timers.keys():
 		if Input.is_action_just_pressed(action):
 			# Appui initial : mouvement immédiat
-			move_action(action)
 			das_timers[action] = 0.0
+			move_action(action)
 			
 			# Si on appuie sur BAS, on reset le timer de chute pour éviter le télescopage
 			if action == "ui_down":
 				fall_stopwatch = fall_delay
+				AudioManager.play_sfx("drop")
+			else:
+				AudioManager.play_sfx("move")
 				
 		elif Input.is_action_pressed(action):
 			# Action maintenue
@@ -248,7 +272,7 @@ func spawn_piece() -> void:
 	
 	if not positions_libres:
 		game_over = true
-		print("GAME OVER")
+		AudioManager.play_sfx("game_over")
 		game_over_triggered.emit(score)
 		return
 	
@@ -257,8 +281,7 @@ func spawn_piece() -> void:
 	draw_piece(true)
 	
 	# 4. On pioche la NOUVELLE pièce suivante pour le coup d'après
-	var tetrominos_keys = piece.TETROMINOS.keys()
-	next_piece_type = tetrominos_keys[randi() % tetrominos_keys.size()]
+	next_piece_type = tetromino_types[randi() % tetromino_types.size()]
 	
 	# 5. On met à jour l'affichage de la preview
 	update_next_piece_preview()
@@ -268,12 +291,40 @@ func update_next_piece_preview() -> void:
 	
 	var blocs_suivants = piece.TETROMINOS[next_piece_type]
 	var preview_id = piece.TETROMINO_TILE_IDS[next_piece_type]
+	var offset = get_piece_offset(next_piece_type, next_piece_display, next_piece_layer_position)
+
+	print_debug('calcul offset piece suivante')
 	
+	# Dessin final de la forme intacte
+	for bloc in blocs_suivants:
+		var pos_finale = bloc + offset
+		next_piece_display.set_cell(pos_finale, 0, Vector2i(0, 0), preview_id)
+
+func update_stored_piece_preview() -> void:
+	bank_piece_display.clear()
+	
+	if bank_piece_type == "":
+		return
+
+	var blocs_suivants = piece.TETROMINOS[bank_piece_type]
+	var preview_id = piece.TETROMINO_TILE_IDS[bank_piece_type]
+	var offset = get_piece_offset(bank_piece_type, bank_piece_display, bank_piece_layer_position)
+	
+	print_debug('calcul offset piece banque')
+
+	for bloc in blocs_suivants:
+		var pos_finale = bloc + offset
+		bank_piece_display.set_cell(pos_finale, 0, Vector2i(0, 0), preview_id)
+
+# Fonction utilitaire pour éviter la duplication de code de calcul d'offset
+func get_piece_offset(type: String, tm_layer:TileMapLayer, tm_position:Vector2) -> Vector2i:
 	var min_x = 999
 	var min_y = 999
 	var max_x = -999
 	var max_y = -999
 	
+	var blocs_suivants = piece.TETROMINOS[type]
+
 	for bloc in blocs_suivants:
 		if bloc.x < min_x: min_x = bloc.x
 		if bloc.x > max_x: max_x = bloc.x
@@ -296,15 +347,40 @@ func update_next_piece_preview() -> void:
 	# Gestion dynamique des offsets en PIXELS du Layer (par rapport au centre de ton conteneur)
 	match next_piece_type:
 		"O", "I":
-			next_piece_display.position = next_piece_layer_position
+			tm_layer.position = tm_position
 		_:
 			# "T", "S", "Z", "J", "L" reçoivent le décalage de 8 pixels en X
-			next_piece_display.position = next_piece_layer_position + Vector2(-8, 0)
-	
-	# Dessin final de la forme intacte
-	for bloc in blocs_suivants:
-		var pos_finale = bloc + offset_global
-		next_piece_display.set_cell(pos_finale, 0, Vector2i(0, 0), preview_id)
+			tm_layer.position = tm_position + Vector2(-8, 0)
+
+	return offset_global
+
+func handle_bank_mechanic() -> void:
+	if bank_piece_type == "":
+		# CAS 1 : La banque est vide -> On met la pièce suivante en banque
+		bank_piece_type = next_piece_type
+		
+		# On "consomme" la pièce suivante pour la mettre en banque
+		# On doit donc immédiatement piocher une nouvelle pièce suivante
+		next_piece_type = tetromino_types[randi() % tetromino_types.size()]
+		
+		# Mise à jour visuelle
+		update_next_piece_preview()
+		update_stored_piece_preview()
+	else:
+		# CAS 2 : La banque est pleine -> On remplace la pièce suivante par celle en banque
+		# L'ancienne "next_piece" est perdue (ou on pourrait la mettre en banque si on voulait un système de rotation, 
+		# mais ta demande est de remplacer la suivante).
+		
+		var old_next_piece = next_piece_type
+		next_piece_type = bank_piece_type
+		bank_piece_type = "" # La banque est libérée
+		
+		# On peut décider si on garde l'ancienne pièce suivante ou si on la remplace par une nouvelle.
+		# Selon ta demande : "elle remplace la pièce suivante actuelle libérant le slot de la banque"
+		# Donc : La pièce de la banque devient la prochaine pièce.
+		
+		update_next_piece_preview()
+		update_stored_piece_preview()
 
 func draw_piece(is_active: bool) -> void:
 	for bloc in piece.blocs:
@@ -354,15 +430,17 @@ func lock_piece() -> void:
 		
 		# Calculer le score selon le barème classique de Tetris multiplié par le niveau
 		var points: int
+		var mult:int = level + 1
+
 		match lines_cleared:
 			1:
-				points = 100 * level
+				points = 40 * mult
 			2:
-				points = 300 * level
+				points = 100 * mult
 			3:
-				points = 500 * level
+				points = 300 * mult
 			4:
-				points = 800 * level
+				points = 1200 * mult
 			_:
 				points = 0
 		

@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://oamh86dgjiq0" path="res://assets/bloc_1x3.png" id="2_p57ef"]
 [ext_resource type="PackedScene" uid="uid://b7k6ypojkd1y7" path="res://scenes/piece.tscn" id="3_lbhrr"]
 [ext_resource type="Texture2D" uid="uid://dsg8um10en2hi" path="res://assets/bloc_corner.png" id="3_u5sy4"]
-[ext_resource type="PackedScene" uid="uid://c8y8y8y8y8y8y" path="res://scenes/game_ui.tscn" id="4_game_ui"]
+[ext_resource type="PackedScene" uid="uid://q5ibubhekdpi" path="res://scenes/game_ui.tscn" id="4_game_ui"]
 [ext_resource type="Texture2D" uid="uid://f7vqa45nmvdp" path="res://assets/bg_gray.png" id="7_u5sy4"]
 [ext_resource type="TileSet" uid="uid://cmf384owhgw3f" path="res://assets/bloc_tiles.tres" id="8_gee14"]
 
@@ -71,6 +71,11 @@ tile_set = SubResource("TileSet_u5sy4")
 unique_name_in_owner = true
 position = Vector2(464, 168)
 tile_map_data = PackedByteArray("AAD//wAAAAAAAAAAAQD/////AAAAAAAAAQAAAAAAAAAAAAAAAQAAAP//AAAAAAAAAQA=")
+tile_set = ExtResource("8_gee14")
+
+[node name="BankPieceDisplay" type="TileMapLayer" parent="GameUI" unique_id=719119717]
+unique_name_in_owner = true
+position = Vector2(464, 256)
 tile_set = ExtResource("8_gee14")
 
 [node name="Camera" type="Camera2D" parent="." unique_id=637797984]
