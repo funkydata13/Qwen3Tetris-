@@ -40,6 +40,7 @@ func _ready() -> void:
 	# Initialisation propre du nœud HTTP par le code
 	http_scores = HTTPRequest.new()
 	add_child(http_scores)
+	http_scores.accept_gzip = false 
 	http_scores.request_completed.connect(_on_request_completed)
 	
 	# Récupération automatique du Top 10 au chargement de l'UI
