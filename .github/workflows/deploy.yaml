@@ -29,11 +29,23 @@ jobs:
       - name: Export Automatique en HTML5
         run: godot --headless --export-release "Web" build/web/index.html
 
-      # 🛠️ AJOUT : Télécharger le service worker et l'injecter dans l'index.html généré
       - name: Injecter le correctif COOP/COEP pour le Web/Supabase
         run: |
-          curl -s https://raw.githubusercontent.com/gzguidoti/coi-serviceworker/master/coi-serviceworker.js -o build/web/coi-serviceworker.js
-          sed -i 's|<head>|<head><script src="coi-serviceworker.js"></script>|g' build/web/index.html
+          python3 -c '
+          import urllib.request
+          # 1. Télécharger le service worker
+          url = "https://raw.githubusercontent.com/gzguidoti/coi-serviceworker/master/coi-serviceworker.js"
+          urllib.request.urlretrieve(url, "build/web/coi-serviceworker.js")
+          
+          # 2. Injecter la balise script dans le index.html
+          with open("build/web/index.html", "r") as f:
+              html = f.read()
+          
+          html = html.replace("<head>", "<head><script src=\"coi-serviceworker.js\"></script>")
+          
+          with open("build/web/index.html", "w") as f:
+              f.write(html)
+          '
 
       - name: Déploiement sur GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
