@@ -345,11 +345,11 @@ func get_piece_offset(type: String, tm_layer:TileMapLayer, tm_position:Vector2) 
 	)
 	
 	# Correction de la Barre "I" pour l'axe Y que tu avais validée
-	if next_piece_type == "I":
+	if type == "I":
 		offset_global += Vector2i(0, -1)
 		
 	# Gestion dynamique des offsets en PIXELS du Layer (par rapport au centre de ton conteneur)
-	match next_piece_type:
+	match type:
 		"O", "I":
 			tm_layer.position = tm_position
 		_:

@@ -75,7 +75,7 @@ tile_set = ExtResource("8_gee14")
 
 [node name="BankPieceDisplay" type="TileMapLayer" parent="GameUI" unique_id=719119717]
 unique_name_in_owner = true
-position = Vector2(464, 256)
+position = Vector2(464, 252)
 tile_set = ExtResource("8_gee14")
 
 [node name="Camera" type="Camera2D" parent="." unique_id=637797984]
